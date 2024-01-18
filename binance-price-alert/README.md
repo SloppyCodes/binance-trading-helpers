@@ -1,11 +1,11 @@
 # Binance Price Alert System
 
-This simple Node.js script monitors the real-time price of a specified trading pair on Binance using their WebSocket API. When the price reaches a predefined threshold, it sends an email alert using nodemailer.
+This simple Node.js script monitors the real-time price of a specified trading pair on Binance using their WebSocket API. When the price reaches a predefined threshold, it plays a sound and sends an email alert using play-sound and nodemailer.
 
 ## Prerequisites
 
 - Node.js installed on your machine.
-- An SMTP server for sending email alerts.
+- (optional) An SMTP server for sending email alerts.
 
 ## Installation
 
@@ -32,6 +32,8 @@ This simple Node.js script monitors the real-time price of a specified trading p
     ```env
     TRADING_PAIR=BTCUSDT
     NOTIFICATION_PRICE=50000
+    PLAY_SOUND=1
+    SEND_EMAIL=1
     SMTP_HOST=your-smtp-host
     SMTP_PORT=your-smtp-port
     SMTP_USERNAME=your-smtp-username

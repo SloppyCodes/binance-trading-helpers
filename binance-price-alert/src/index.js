@@ -1,5 +1,6 @@
 require('dotenv').config();
 
+const player = require('play-sound')(opts = {});
 const nodemailer = require("nodemailer");
 const {WebsocketStream} = require('@binance/connector');
 const {Console} = require('console');
@@ -20,6 +21,8 @@ const callbacks = {
     }
 }
 
+logger.log(`Pair: ${process.env.TRADING_PAIR}, alert price: ${process.env.NOTIFFICATION_PRICE}`);
+
 const websocketStreamClient = new WebsocketStream({logger, callbacks});
 websocketStreamClient.kline(process.env.TRADING_PAIR, '1s');
 
@@ -33,8 +36,16 @@ async function handleValues(currentPrice) {
         process.exit(1);
     }
     if (currentPrice * 1 >= process.env.NOTIFFICATION_PRICE * 1 && !priceAlertSent) {
-        console.log('Sending email and closing the websocket connection...');
-        await sendEmail(currentPrice);
+        logger.log(`Current price is ${currentPrice}!!!`);
+        if (process.env.PLAY_SOUND === '1') {
+            player.play('./resources/alarm.mp3', function (err) {
+                if (err) logger.log(err);
+            });
+        }
+        if (process.env.SEND_EMAIL === '1') {
+            await sendEmail(currentPrice);
+        }
+
         priceAlertSent = true;
     }
 }
@@ -57,7 +68,7 @@ async function sendEmail(price) {
         text: `The current price of ${process.env.TRADING_PAIR} reached ${price}`,
     });
 
-    console.log("Message sent: %s", info.messageId);
+    logger.log("Message sent: %s", info.messageId);
 }
 
 function closeConnection() {
